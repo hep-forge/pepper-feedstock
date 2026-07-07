@@ -11,6 +11,11 @@ Builds linux-amd64 + linux-arm64 in one matrix workflow and uploads to the
 
 Pepper: portable engine for the production of parton-level event records
 
+## Architectures
+
+State per architecture: see the platforms badge above or [anaconda.org/hep-forge/pepper](https://anaconda.org/hep-forge/pepper).
+
+
 ## Install
 
 ```bash
@@ -20,3 +25,4 @@ conda install -c hep-forge -c conda-forge pepper
 ## Maintainers
 
 * [@meiyasan](https://github.com/meiyasan/)
+
