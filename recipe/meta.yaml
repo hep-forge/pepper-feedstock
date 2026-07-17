@@ -1,5 +1,5 @@
 {% set versions = {
-    "1.12.0": "REPLACE_WITH_SHA256"
+    "1.12.0": "49daab0f01dc198db63ad89e1cb950418c00330c8eb524a4e52af790435a9608"
 } %}
 
 {% set version = environ.get('COMMIT_VERSION', None) %}
@@ -17,6 +17,8 @@ source:
   {% if versions.get(version, None) %}
   sha256: {{ versions.get(version) }}
   {% endif %}
+  patches:
+    - patches/0001-guard-fixmacportskokkos-with-if-apple.patch
 
 build:
   number: 0
@@ -30,19 +32,48 @@ requirements:
     - {{ stdlib('c') }}
     - cmake
     - make
+    - git
   host:
-    # TODO: Pepper needs Kokkos, HDF5 (for LHEH5), and its FORM-generated
-    # process libraries -- work out the real dependency set before building.
+    # Pepper's own CMake tries find_package(Kokkos CONFIG)/find_package(pybind11
+    # CONFIG) first and only falls back to vendoring a build via FetchContent if
+    # not found -- conda-forge's kokkos/pybind11 satisfy those directly.
+    # conda-forge ships two kokkos 4.7.01 builds (cuda12... and a plain
+    # hash-only CPU build) with no glob-able prefix to distinguish them
+    # (unlike e.g. libtorch's "cpu*" convention) -- pin the exact CPU
+    # build string so the solver doesn't grab the CUDA variant and drag
+    # in the whole CUDA toolkit. Needs bumping whenever conda-forge
+    # revs kokkos.
+    - kokkos 4.7.01 hbbfbac7_0
+    - hdf5
+    - pybind11
+    - python
+    - zlib
   run:
+    # same exact-build pin as host:, see comment there
+    - kokkos 4.7.01 hbbfbac7_0
+    - hdf5
+    - python
 
 test:
   commands:
-    - echo "TODO: a real smoke test"
+    - pepper --help
 
 about:
   home: "https://gitlab.com/spice-mc/pepper"
-  license: "GPL-3.0-only"
+  dev_url: "https://gitlab.com/spice-mc/pepper"
+  license: "GPL-3.0-or-later"
+  license_file: LICENSE
   summary: "Pepper: portable engine for the production of parton-level event records"
+  description: |
+    Pepper is a portable parton-level event generator (arXiv:2311.06198).
+    This build enables Kokkos (portable on-node parallelism), HDF5 (LHEH5
+    output) and Python bindings (pyper), all satisfied directly from
+    conda-forge. HepMC3/LHAPDF integration is intentionally left disabled
+    for now: Pepper's own CMake treats both as fully optional, and wiring
+    them up would mean pulling in hep-forge's own hepmc/lhapdf packages,
+    whose build strings are tied to a specific root variant Pepper itself
+    has no other need for -- worth revisiting as a separate enhancement,
+    not required for a working core package.
 
 extra:
   recipe-maintainers:
