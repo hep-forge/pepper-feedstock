@@ -8,6 +8,18 @@
 
 {% set name = environ.get('ANACONDA_PACKAGE', 'pepper')|string|lower %}
 
+# conda-forge ships two kokkos 4.7.01 builds per arch (a cuda12 one and a
+# plain hash-only CPU one) with no glob-able prefix to distinguish them
+# (unlike e.g. libtorch's "cpu*" convention), and the CPU build's hash
+# differs per architecture -- pin the exact per-arch CPU build string so
+# the solver doesn't grab the CUDA variant. Needs bumping whenever
+# conda-forge revs kokkos.
+{% if aarch64 %}
+{% set kokkos_pin = "4.7.01 habbe1fc_0" %}
+{% else %}
+{% set kokkos_pin = "4.7.01 hbbfbac7_0" %}
+{% endif %}
+
 package:
   name: {{ name }}
   version: {{ environ.get('ANACONDA_VERSION', version)|replace("-", ".") }}
@@ -37,20 +49,22 @@ requirements:
     # Pepper's own CMake tries find_package(Kokkos CONFIG)/find_package(pybind11
     # CONFIG) first and only falls back to vendoring a build via FetchContent if
     # not found -- conda-forge's kokkos/pybind11 satisfy those directly.
-    # conda-forge ships two kokkos 4.7.01 builds (cuda12... and a plain
-    # hash-only CPU build) with no glob-able prefix to distinguish them
-    # (unlike e.g. libtorch's "cpu*" convention) -- pin the exact CPU
-    # build string so the solver doesn't grab the CUDA variant and drag
-    # in the whole CUDA toolkit. Needs bumping whenever conda-forge
-    # revs kokkos.
-    - kokkos 4.7.01 hbbfbac7_0
+    - kokkos {{ kokkos_pin }}
     - hdf5
     - pybind11
     - python
+    # EnablePybind11.cmake shells out to `python3 -c "from distutils import
+    # sysconfig..."` to compute the pyper install path -- distutils was
+    # removed from the stdlib in Python 3.12. setuptools' _distutils_hack
+    # (auto-loaded via a .pth file at interpreter startup) redirects
+    # `import distutils` to its own vendored copy, but only if setuptools
+    # is actually present in the env -- it isn't guaranteed to be pulled
+    # in transitively, so declare it explicitly.
+    - setuptools
     - zlib
   run:
     # same exact-build pin as host:, see comment there
-    - kokkos 4.7.01 hbbfbac7_0
+    - kokkos {{ kokkos_pin }}
     - hdf5
     - python
 
