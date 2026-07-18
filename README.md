@@ -13,7 +13,12 @@ Pepper: portable engine for the production of parton-level event records
 
 ## Architectures
 
-State per architecture: see the platforms badge above or [anaconda.org/hep-forge/pepper](https://anaconda.org/hep-forge/pepper).
+| Architecture | Latest published |
+|--------------|------------------|
+| linux-amd64 (`linux-64`) | ✅ `1.12.0` |
+| linux-arm64 (`linux-aarch64`) | ✅ `1.12.0` |
+
+_As of the last feedstock render; the badges above are live._
 
 
 ## Install
