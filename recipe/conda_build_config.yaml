@@ -33,3 +33,8 @@ libgcc_version:        # [linux]
   - 14.*
 libstdcxx_version:     # [linux]
   - 14.*
+
+# hep-forge ROOT is built for Python 3.12 only; unpinned, conda-build took
+# 3.13/3.14 and pepper could not share an environment with it.
+python:
+  - 3.12
