@@ -1,10 +1,10 @@
 #! /usr/bin/bash
 set -eux
 
-# std::back_inserter is used without <iterator>; libstdc++ pulls it in
-# through other headers, libc++ does not.
+# std::back_inserter, std::prev_permutation and std::getenv are used without
+# their headers; libstdc++ pulls them in through others, libc++ does not.
 if [[ "$(uname)" == "Darwin" ]]; then
-    export CXXFLAGS="${CXXFLAGS} -include iterator"
+    export CXXFLAGS="${CXXFLAGS} -include iterator -include cstdlib"
 fi
 
 mkdir -p build
