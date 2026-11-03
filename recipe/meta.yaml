@@ -17,6 +17,9 @@
 # conda-forge revs kokkos.
 {% if aarch64 %}
 {% set kokkos_pin = "4.7.01 habbe1fc_0" %}
+{% elif osx %}
+{# osx-arm64 has a single 4.7.01 build, with no CUDA variant to avoid #}
+{% set kokkos_pin = "4.7.01 h27781ba_0" %}
 {% else %}
 {% set kokkos_pin = "4.7.01 hbbfbac7_0" %}
 {% endif %}
