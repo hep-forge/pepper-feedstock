@@ -10,12 +10,11 @@ index d7d9d4e..94235bb 100644
 -    install(
 -      FILES "${PROJECT_SOURCE_DIR}/CMake/FixMacPortsKokkos.cmake"
 -      DESTINATION "${CMAKE_INSTALL_LIBDIR}/cmake/Pepper/Utilities")
-+    # FixMacPortsKokkos.cmake is a macOS/MacPorts/clang-17-specific
-+    # workaround (see its own header comment) that pokes at a
-+    # Kokkos::LIBDL target -- that target doesn't exist with every
-+    # Kokkos build config (e.g. conda-forge's Linux OpenMP/Serial
-+    # build), so only run it on Apple platforms as originally intended.
-+    if(APPLE)
++    # FixMacPortsKokkos.cmake is a MacPorts/clang-17 workaround (see its
++    # own header comment) that pokes at a Kokkos::LIBDL target. That
++    # target does not exist in conda-forge's Kokkos builds, on Linux or
++    # macOS, so only run it where the target is there.
++    if(TARGET Kokkos::LIBDL)
 +      include(CMake/FixMacPortsKokkos.cmake)
 +      install(
 +        FILES "${PROJECT_SOURCE_DIR}/CMake/FixMacPortsKokkos.cmake"
