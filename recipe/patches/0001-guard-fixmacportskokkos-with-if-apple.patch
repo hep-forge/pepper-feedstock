@@ -2,7 +2,7 @@ diff --git a/CMake/EnableKokkos.cmake b/CMake/EnableKokkos.cmake
 index d7d9d4e..94235bb 100644
 --- a/CMake/EnableKokkos.cmake
 +++ b/CMake/EnableKokkos.cmake
-@@ -24,10 +24,17 @@ if(Kokkos_FOUND)
+@@ -24,10 +24,16 @@ if(Kokkos_FOUND)
        kokkos_check(OPTIONS CUDA_LAMBDA CUDA_CONSTEXPR)
      endif()
  
