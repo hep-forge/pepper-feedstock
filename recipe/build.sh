@@ -1,6 +1,12 @@
 #! /usr/bin/bash
 set -eux
 
+# std::back_inserter is used without <iterator>; libstdc++ pulls it in
+# through other headers, libc++ does not.
+if [[ "$(uname)" == "Darwin" ]]; then
+    export CXXFLAGS="${CXXFLAGS} -include iterator"
+fi
+
 mkdir -p build
 cd build
 
